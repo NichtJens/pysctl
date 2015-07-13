@@ -21,7 +21,7 @@ def clean_key(k):
 
     for b in base[1:]:
         k = remove_prefix(b, k)
-        k = k.strip(string.whitespace + delim)        
+        k = k.strip(string.whitespace + delim)
 
     return delim.join(base + [k])
 
@@ -34,8 +34,14 @@ def clean_value(v):
 def read(k):
     """Read and return value for key k"""
     k = clean_key(k)
-    with open(k, 'r') as f:
-        v = f.readline()
+
+    try:
+        with open(k, 'r') as f:
+            v = f.readline()
+    except IOError as e:
+        print '{} when trying to read from {}'.format(e.strerror, e.filename)
+        return None
+
     return clean_value(v)
 
 
@@ -43,7 +49,14 @@ def write(k, v):
     """Write value v to key k"""
     k = clean_key(k)
     v = clean_value(v)
-    with open(k, 'w') as f:
-        f.write(v)
+
+    try:
+        with open(k, 'w') as f:
+            f.write(v)
+    except IOError as e:
+        print '{} when trying to write {} to {}'.format(e.strerror, v, e.filename)
+        return False
+
+    return True
 
 
