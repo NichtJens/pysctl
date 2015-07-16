@@ -1,18 +1,36 @@
 #!/usr/bin/env python
 
-from pysctl import read, write
+import pysctl as pc
 
 
 what = "net/core/rmem_max"
 
-orig = read(what)
-print read(what)
+orig = pc.read(what)
+print "Original Value:\t", orig
 
-write(what, int(orig)/2)
-print read(what)
 
-write(what, orig)
-print read(what)
+try:
+    pc.write(what, int(orig)/2)
+except pc.WriteError as e:
+    print e
+    pass
 
-print read("net.ipv4.tcp_fastopen_key")
+print "New Value:\t", pc.read(what)
+
+
+try:
+    pc.write(what, orig)
+except pc.WriteError as e:
+    print e
+    pass
+
+print "Reset Value:\t", pc.read(what)
+
+
+try:
+    print pc.read("net.ipv4.tcp_fastopen_key")
+except pc.ReadError as e:
+    print e
+    pass
+
 
