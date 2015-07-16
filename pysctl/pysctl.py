@@ -39,8 +39,7 @@ def read(k):
         with open(k, 'r') as f:
             v = f.readline()
     except IOError as e:
-        print '{} when trying to read from {}'.format(e.strerror, e.filename)
-        return None
+        raise ReadError(e.strerror, e.filename)
 
     return clean_value(v)
 
@@ -54,9 +53,24 @@ def write(k, v):
         with open(k, 'w') as f:
             f.write(v)
     except IOError as e:
-        print '{} when trying to write {} to {}'.format(e.strerror, v, e.filename)
-        return False
+        raise WriteError(e.strerror, e.filename, v)
 
-    return True
+
+
+
+
+class Error(Exception):
+    pass
+
+class ReadError(Error):
+    def __init__(self, error, key):
+        msg = "{} when trying to read from {}".format(error, key)
+        super(ReadError, self).__init__(msg)
+
+class WriteError(Error):
+    def __init__(self, error, key, value):
+        msg = "{} when trying to write {} to {}".format(error, value, key)
+        super(WriteError, self).__init__(msg)
+
 
 
