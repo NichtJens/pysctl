@@ -122,6 +122,11 @@ class wxPysctl(wx.Frame):
 
 
 
+    def evaluate(self, value):
+        return str(eval(value, {'__builtins__': {}}))
+
+
+
     def onIconClick(self, event):
         name = self.get_name(event)
 
@@ -157,7 +162,7 @@ class wxPysctl(wx.Frame):
             self.set_idle(name)
 
         try:
-            evaluated = str(eval(value))
+            evaluated = self.evaluate(value)
         except (SyntaxError, NameError):
             return
 
@@ -178,7 +183,7 @@ class wxPysctl(wx.Frame):
         value = txt.GetValue()
 
         try:
-            evaluated = str(eval(value))
+            evaluated = self.evaluate(value)
         except (SyntaxError, NameError) as e:
             self.set_error(name, e.message)
             return
