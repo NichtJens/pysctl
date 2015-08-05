@@ -18,6 +18,12 @@ FIELDS = [
 
 
 
+def safer_eval(string):
+    """Safer version of eval() as globals and builtins are inaccessible"""
+    return str(eval(string, {'__builtins__': {}}))
+
+
+
 class wxPysctl(wx.Frame):
 
     def __init__(self, debug=False, actually_write=True):
@@ -123,7 +129,7 @@ class wxPysctl(wx.Frame):
 
 
     def evaluate(self, value):
-        return str(eval(value, {'__builtins__': {}}))
+        return safer_eval(value)
 
 
 
