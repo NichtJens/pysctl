@@ -54,9 +54,9 @@ class wxPysctl(wx.Frame):
 
 
     def make_widget_set(self, name, value):
-        ico = wx.StaticBitmap(self.panel, wx.ID_ANY, name="ico::"+name, bitmap=self.icons["idle"])
+        ico = wx.StaticBitmap(self.panel, wx.ID_ANY, name="ico::"+name)
         lbl = wx.StaticText  (self.panel, wx.ID_ANY, name="lbl::"+name, label=name)
-        txt = wx.TextCtrl    (self.panel, wx.ID_ANY, name="txt::"+name, value=value, style=wx.TE_PROCESS_ENTER)
+        txt = wx.TextCtrl    (self.panel, wx.ID_ANY, name="txt::"+name, value=value)
         btn = wx.Button      (self.panel, wx.ID_ANY, name="btn::"+name, label="set")
 
         ico.Bind(wx.EVT_LEFT_DOWN,  self.onIconClick)
