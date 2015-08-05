@@ -16,6 +16,12 @@ FIELDS = [
 "net.core.wmem_max"
 ]
 
+FIELDS += [
+"/proc/sys/net/ipv4/tcp_mem",
+"/proc/sys/net/ipv4/tcp_wmem",
+"/proc/sys/net/ipv4/tcp_rmem"
+]
+
 
 
 def safer_eval(string):
@@ -129,7 +135,7 @@ class wxPysctl(wx.Frame):
 
 
     def evaluate(self, value):
-        return safer_eval(value)
+        return "\t".join( safer_eval(v) for v in value.split() )
 
 
 
