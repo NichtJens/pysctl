@@ -5,6 +5,7 @@ from math import *
 import pysctl
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
+from ntextctrl import nTextCtrl
 
 
 TITLE = "Network Memory Editor"
@@ -56,7 +57,7 @@ class wxPysctl(wx.Frame):
     def make_widget_set(self, name, value):
         ico = wx.StaticBitmap(self.panel, wx.ID_ANY, name="ico::"+name)
         lbl = wx.StaticText  (self.panel, wx.ID_ANY, name="lbl::"+name, label=name)
-        txt = wx.TextCtrl    (self.panel, wx.ID_ANY, name="txt::"+name, value=value)
+        txt = nTextCtrl      (self.panel, wx.ID_ANY, name="txt::"+name, value=value)
         btn = wx.Button      (self.panel, wx.ID_ANY, name="btn::"+name, label="set")
 
         ico.Bind(wx.EVT_LEFT_DOWN,  self.onIconClick)
@@ -81,7 +82,7 @@ class wxPysctl(wx.Frame):
             ws = self.make_widget_set(name, value)
             for w in ws:
                 style = wx.ALL|wx.ALIGN_CENTER_VERTICAL
-                if isinstance(w, wx.TextCtrl):
+                if isinstance(w, nTextCtrl):
                     style |= wx.EXPAND
                 sizer.Add(w, 0, style, 5)
 
