@@ -32,8 +32,17 @@ def safer_eval(string):
 
 
 class wxPysctl(wx.Frame):
+    """
+    A GUI example using pysctl from wxPython
+    """
 
     def __init__(self, debug=False, actually_write=True):
+        """
+        Create (and Show) this Frame, a main panel/sizer, and the status icons
+        If debug is True, print logging info
+        If actually_write is False, pysctl.write() is not called
+        """
+
         wx.Frame.__init__(self, None, wx.ID_ANY, title=TITLE)
 
         self.debug = debug
@@ -55,6 +64,7 @@ class wxPysctl(wx.Frame):
 
 
     def make_widget_set(self, name, value):
+        """Create, Bind and set state of icon, label (with tooltip), textbox, and button"""
         ico = wx.StaticBitmap(self.panel, wx.ID_ANY, name="ico::"+name)
         lbl = wx.StaticText  (self.panel, wx.ID_ANY, name="lbl::"+name, label=name)
         txt = nTextCtrl      (self.panel, wx.ID_ANY, name="txt::"+name, value=value)
@@ -73,6 +83,7 @@ class wxPysctl(wx.Frame):
 
 
     def make_all_widgets(self):
+        """Add widget set for each entry in FIELDS to a FlexGridSizer"""
         sizer = wx.FlexGridSizer(len(FIELDS), 4)
         sizer.AddGrowableCol(2)
 
@@ -92,18 +103,24 @@ class wxPysctl(wx.Frame):
 
 
     def set_idle(self, name, message=""):
+        """Set idle status via set_status"""
         self.set_status("idle", name, message)
 
 
     def set_warn(self, name, message="Change made!"):
+        """Set warning status via set_status"""
         self.set_status("warn", name, message)
 
 
     def set_error(self, name, message="An Error occurred!"):
+        """Set error status via set_status"""
         self.set_status("error", name, message)
 
 
     def set_status(self, status, name, message):
+        """
+        Set icon (with tooltip message), button, and textbox according to status
+        """
         ico = self.find_ico(name)
         btn = self.find_btn(name)
         txt = self.find_txt(name)
@@ -122,6 +139,7 @@ class wxPysctl(wx.Frame):
 
 
     def set_icon(self, name):
+        """Set application icon"""
         icon = wx.EmptyIcon()
         icon.CopyFromBitmap(self.icons[name])
         self.SetIcon(icon)
@@ -136,11 +154,13 @@ class wxPysctl(wx.Frame):
 
 
     def evaluate(self, value):
+        """Split value, evaluate via safer_eval, return joined items"""
         return "\t".join( safer_eval(v) for v in value.split() )
 
 
 
     def onIconClick(self, event):
+        """Re-read value from sysctl"""
         name = self.get_name(event)
 
         if self.debug:
@@ -151,6 +171,7 @@ class wxPysctl(wx.Frame):
 
 
     def onLabelClick(self, event):
+        "Reset value to originally read one"
         name = self.get_name(event)
 
         if self.debug:
@@ -161,6 +182,10 @@ class wxPysctl(wx.Frame):
 
 
     def onTextChange(self, event):
+        """
+        Adjust status when value in textbox differs from value in sysctl
+        Adjust button label if content of textbox can be evaluated
+        """
         name = self.get_name(event)
 
         if self.debug:
@@ -187,6 +212,7 @@ class wxPysctl(wx.Frame):
 
 
     def onButtonClick(self, event):
+        """Evaluate content of textbox if needed, pysctl.write() it otherwise"""
         name = self.get_name(event)
 
         if self.debug:
