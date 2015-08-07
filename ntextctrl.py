@@ -4,6 +4,10 @@ import wx
 
 
 class nTextCtrl(wx.Panel):
+    """
+    Widget containing an array of wx.TextCtrl widgets
+    Trys to mimic the behavior of the contained widgets
+    """
 
     def __init__(self,
                  parent, id=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, name=wx.TextCtrlNameStr,
@@ -11,6 +15,11 @@ class nTextCtrl(wx.Panel):
                  style=0, validator=wx.DefaultValidator,
                  orient=wx.HORIZONTAL,
                  debug=False):
+        """
+        The number of TextCtrl widgets is either given by number or by the length of value
+        Other parameters are forwarded to the TextCtrl widgets or the panel/sizer containing them
+        If debug is True, the TextCtrl widgets will be filled with a counting string instead
+        """
 
         wx.Panel.__init__(self, parent=parent, id=id, pos=pos, size=size, name=name)
 
@@ -36,40 +45,52 @@ class nTextCtrl(wx.Panel):
         self._setup_forwarders()
 
 
-    def _setup_forwarders(self):
-        EVENTS = (wx.EVT_TEXT, wx.EVT_TEXT_ENTER)
-        for e in EVENTS:
+    def _setup_forwarders(self,
+                          events = (wx.EVT_TEXT, wx.EVT_TEXT_ENTER),
+                          methods = ("SetWindowStyleFlag", "ToggleWindowStyle")):
+        """
+        Calls _bind_event_forwarder and _add_method_forwarder
+        for the given events and methods, respectively
+        """
+
+        for e in events:
             self._bind_event_forwarder(e)
 
-        METHODS = ("SetWindowStyleFlag", "ToggleWindowStyle")
-        for f in METHODS:
-            self._add_method_fowarder(f)
+        for f in methods:
+            self._add_method_forwarder(f)
 
 
     def _bind_event_forwarder(self, event):
+        """Bind _event_forwarder to event for all _textctrls"""
         for t in self._textctrls:
             t.Bind(event, self._event_forwarder)
 
     def _event_forwarder(self, event):
+        """Replace the EventObject by self and re-emit event"""
         event.SetEventObject(self)
         self.GetEventHandler().ProcessEvent(event)
 
 
-    def _add_method_fowarder(self, function_name):
-        setattr(self, function_name, self._method_fowarder(function_name))
+    def _add_method_forwarder(self, function_name):
+        """Add _method_forwarder to self for given function_name"""
+        setattr(self, function_name, self._method_forwarder(function_name))
 
-    def _method_fowarder(self, function_name):
+    def _method_forwarder(self, function_name):
+        """Curry a _method_loop with function_name"""
         return lambda *args, **kwargs: self._method_loop(function_name, *args, **kwargs)
 
     def _method_loop(self, function_name, *args, **kwargs):
+        """Call function_name(*args, **kwargs) for all _textctrls"""
         for t in self._textctrls:
             getattr(t, function_name)(*args, **kwargs)
 
 
     def GetValue(self):
-        return "\t".join(tc.GetValue() for tc in self._textctrls)
+        """Return the joined Values of all _textctrls"""
+        return "\t".join(t.GetValue() for t in self._textctrls)
 
     def SetValue(self, value):
+        """If necessary split value, set its items as Value to the _textctrls"""
         if isinstance(value, str):
             value = value.split()
         for v, tc in zip(value, self._textctrls):
@@ -82,6 +103,7 @@ class nTextCtrl(wx.Panel):
 
 
 def correct(number=None, value=None):
+    """Make the content of number and value consistent"""
 
     if value is None:
         if number is None:
@@ -97,6 +119,8 @@ def correct(number=None, value=None):
 
 
 def test_correct():
+    """A simple test for correct()"""
+
     n = 10
     L = range(n)
 
@@ -118,8 +142,15 @@ def test_correct():
 
 
 class MainFrame(wx.Frame):
+    """A small test for nTextCtrl"""
 
     def __init__(self):
+        """
+        Create this frame, a panel, and a sizer
+        Add a standard wx.TextCtrl and several nTextCtrl widgets
+        Read and print their Values
+        """
+
         wx.Frame.__init__(self, None, wx.ID_ANY, "My Frame")
         panel = wx.Panel(self)
         sizer = wx.BoxSizer(wx.VERTICAL)
