@@ -66,7 +66,7 @@ class wxPysctl(wx.Frame):
     def make_widget_set(self, name, value):
         """Create, Bind and set state of icon, label (with tooltip), textbox, and button"""
         ico = wx.StaticBitmap(self.panel, wx.ID_ANY, name="ico::"+name)
-        lbl = wx.StaticText  (self.panel, wx.ID_ANY, name="lbl::"+name, label=name)
+        lbl = wx.StaticText  (self.panel, wx.ID_ANY, name="lbl::"+name, label=pysctl.printable_key(name))
         txt = nTextCtrl      (self.panel, wx.ID_ANY, name="txt::"+name, value=value)
         btn = wx.Button      (self.panel, wx.ID_ANY, name="btn::"+name, label="set")
 

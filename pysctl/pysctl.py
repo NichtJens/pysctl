@@ -3,6 +3,7 @@ import string
 
 base = "/proc/sys"
 delim = os.path.sep
+delim_alt = "."
 base = base.split(delim)
 
 
@@ -16,7 +17,7 @@ def remove_prefix(p, l):
 
 def clean_key(k):
     """Clean the key k"""
-    k = k.replace(".", delim)
+    k = k.replace(delim_alt, delim)
     k = k.strip(string.whitespace + delim)
 
     for b in base[1:]:
@@ -24,6 +25,14 @@ def clean_key(k):
         k = k.strip(string.whitespace + delim)
 
     return delim.join(base + [k])
+
+
+def printable_key(k):
+    """Pretty printed version of the key k"""
+    k = clean_key(k)
+    k = k.replace(clean_key(""), "")
+    k = k.replace(delim, delim_alt)
+    return k
 
 
 def clean_value(v):
